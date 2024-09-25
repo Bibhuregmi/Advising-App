@@ -1,10 +1,11 @@
 import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import React, { useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-//   const navigation = useNavigation();
+  const navigation = useNavigation();
 
   const handleLogin = () => {
     console.log(`User with Email ${email} logged!`);
@@ -34,7 +35,7 @@ const LoginScreen = () => {
       </View>
 
       <View style={styles.buttonContainer}>
-        <TouchableOpacity onPress={() => navigation.navigate('Signup')} style={[styles.button, styles.buttonOutline]}>
+        <TouchableOpacity onPress={() => navigation.replace('Signup')} style={[styles.button, styles.buttonOutline]}>
           <Text style={styles.buttonOutlineText}>Sign Up</Text>
         </TouchableOpacity>
       </View>
