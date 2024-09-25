@@ -10,11 +10,12 @@ const SignupScreen = () => {
 
   const handleSignup = () => {
     // This function will have firebase functionality
-    console.log('Signup button pressed');
+    console.log('New account has been created');
   };
 
   return (
     <KeyboardAvoidingView style={styles.container} behavior="padding">
+        <Text style = {styles.text}>Create your account</Text>
       <View style={styles.inputContainer}>
         <TextInput
           placeholder="First Name"
@@ -60,6 +61,12 @@ const SignupScreen = () => {
 export default SignupScreen;
 
 const styles = StyleSheet.create({
+  text: {
+    marginBottom: 10,
+    fontSize: 15,
+    color : "#0782F9",
+    fontWeight: "bold"
+},
   container: {
     flex: 1,
     justifyContent: 'center',
