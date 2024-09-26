@@ -1,5 +1,6 @@
 import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import React, { useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
 
 const SignupScreen = () => {
   const [firstName, setFirstName] = useState('');
@@ -7,6 +8,7 @@ const SignupScreen = () => {
   const [studentId, setStudentId] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigation = useNavigation();
 
   const handleSignup = () => {
     // This function will have firebase functionality
@@ -50,7 +52,7 @@ const SignupScreen = () => {
         />
       </View>
       <View style={styles.buttonContainer}>
-        <TouchableOpacity onPress={handleSignup} style={styles.button}>
+        <TouchableOpacity onPress={() => navigation.navigate('ProfileCreate')} style={styles.button}>
           <Text style={styles.buttonText}>Create Account</Text>
         </TouchableOpacity>
       </View>
