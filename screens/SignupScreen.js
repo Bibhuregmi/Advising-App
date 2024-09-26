@@ -1,5 +1,6 @@
 import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import React, { useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
 
 const SignupScreen = () => {
   const [firstName, setFirstName] = useState('');
@@ -7,14 +8,16 @@ const SignupScreen = () => {
   const [studentId, setStudentId] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigation = useNavigation();
 
   const handleSignup = () => {
     // This function will have firebase functionality
-    console.log('Signup button pressed');
+    console.log('New account has been created');
   };
 
   return (
     <KeyboardAvoidingView style={styles.container} behavior="padding">
+        <Text style = {styles.text}>Create your account</Text>
       <View style={styles.inputContainer}>
         <TextInput
           placeholder="First Name"
@@ -49,7 +52,7 @@ const SignupScreen = () => {
         />
       </View>
       <View style={styles.buttonContainer}>
-        <TouchableOpacity onPress={handleSignup} style={styles.button}>
+        <TouchableOpacity onPress={() => navigation.navigate('ProfileCreate')} style={styles.button}>
           <Text style={styles.buttonText}>Create Account</Text>
         </TouchableOpacity>
       </View>
@@ -60,6 +63,12 @@ const SignupScreen = () => {
 export default SignupScreen;
 
 const styles = StyleSheet.create({
+  text: {
+    marginBottom: 10,
+    fontSize: 15,
+    color : "#0782F9",
+    fontWeight: "bold"
+},
   container: {
     flex: 1,
     justifyContent: 'center',

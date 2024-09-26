@@ -13,6 +13,8 @@ const LoginScreen = () => {
 
   return (
     <KeyboardAvoidingView style={styles.container} behavior="padding">
+      <Text style = {styles.Welcometext}>Welcome to Advising app!</Text>
+      <Text style = {styles.text}>Log in to your account </Text>
       <View style={styles.inputContainer}>
         <TextInput
           placeholder="Email"
@@ -35,7 +37,8 @@ const LoginScreen = () => {
       </View>
 
       <View style={styles.buttonContainer}>
-        <TouchableOpacity onPress={() => navigation.replace('Signup')} style={[styles.button, styles.buttonOutline]}>
+        <Text style = {styles.text}>New to app?</Text>
+        <TouchableOpacity onPress={() => navigation.navigate('Signup')} style={[styles.button, styles.buttonOutline]}>
           <Text style={styles.buttonOutlineText}>Sign Up</Text>
         </TouchableOpacity>
       </View>
@@ -43,6 +46,18 @@ const LoginScreen = () => {
   );
 };
 const styles = StyleSheet.create({
+  Welcometext:{
+    marginBottom: 100,
+    fontSize: 30,
+    fontWeight: "bold",
+    color : "#0782F9",
+  },
+  text: {
+    marginBottom: 10,
+    fontSize: 15,
+    color : "#0782F9",
+    fontWeight: "bold"
+  },
   container: {
     justifyContent: 'center',
     alignItems: 'center',
