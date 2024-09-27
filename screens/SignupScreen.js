@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { Picker } from '@react-native-picker/picker';
 import logo from '../assets/advisingLogo.png';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const SignupScreen = () => {
   const [firstName, setFirstName] = useState('');
