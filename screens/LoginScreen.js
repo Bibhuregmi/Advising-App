@@ -1,6 +1,8 @@
 import { Image, KeyboardAvoidingView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import React, { useCallback, useState, useMemo } from 'react';
 import { useNavigation } from '@react-navigation/native';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../firebase';
 import logo from '../assets/advisingLogo.png';
 
 const LoginScreen = () => {
@@ -18,23 +20,32 @@ const LoginScreen = () => {
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0; 
-  }, [email.password]);
+  }, [email, password]);
 
-  const handleLogin = useCallback(() => {
+  const handleLogin = useCallback( async () => {
     if(validateForm()){
-      //TODO: Will contain the authentication function
-      console.log(`User ${email} logged in`)
+      try{
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+        console.log('Logged in user: ', user.uid, user.course);
+
+        //TODO: NAVIGATION TO THE HOME PAGE
+      }catch (error)
+      {
+        console.error('Login Error: ', error.message);
+      }
+      
       //TODO: Contains the navigation to the home page 
   } 
-  }, [email,password]);
+  }, [email,password,validateForm]);
 
   const handleEmailChange = useCallback((text) => {
-    // console.log('Email input is changing:', text);
+    console.log('Email input is changing:', text);
     setEmail(text);
   }, []);
 
   const handlePasswordChange = useCallback((text) => {
-    // console.log('Password input is changing:', text);
+    console.log('Password input is changing:', text);
     setPassword(text);
   }, []);
 
