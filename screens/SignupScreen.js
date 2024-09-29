@@ -3,6 +3,9 @@ import React, { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { Picker } from '@react-native-picker/picker';
 import logo from '../assets/advisingLogo.png';
+import { createUserWithEmailAndPassword }  from 'firebase/auth';
+import { setDoc, doc } from 'firebase/firestore';
+import { auth, db } from '../firebase';
 
 const SignupScreen = () => {
   const [firstName, setFirstName] = useState('');
@@ -12,6 +15,7 @@ const SignupScreen = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [course, setCourse] = useState(''); 
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false); // implementing loading state
   const navigation = useNavigation();
 
   const courses = [
@@ -37,13 +41,31 @@ const SignupScreen = () => {
     setErrors(errors);
     return Object.keys(errors).length === 0;
   }
-  const handleSignup = () => {
-    // This function will also have firebase functionality
-
+  const handleSignup = async () => {
     //If the form validation is passed, user will be navigated to the Login Screen
     if(validateForm()){
-        console.log('New account has been created');
-        navigation.navigate('Login');
+        setLoading(true);
+        try{
+            //Creates user in auth
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+            await setDoc(doc(db, 'users', user.uid),{
+                firstName,
+                lastName,
+                email,
+                course,
+                gender: 'Not Specified',
+                bio: 'Student at Niagara College'
+            });
+            console.log ('User registerd for the course: ', course);
+            console.log('New account has been created');
+            navigation.navigate('Login'); //navigate to the login screen
+        } catch(error){
+            setErrors({...errors, signup: error.message});
+            console.error('Signup error:', error.message);
+        } finally{
+            setLoading(false); //Stops loading
+        }
     } 
   };
 
@@ -119,8 +141,9 @@ const SignupScreen = () => {
         </View>
         {errors.course && <Text style= {styles.errorText} >{errors.course}</Text>}
 
-        <TouchableOpacity style={styles.button} onPress={handleSignup}>
-          <Text style={styles.buttonText}>Register</Text>
+        {/*Button will be disbled after pressing untill the info is saved*/}            
+        <TouchableOpacity style={styles.button} onPress={handleSignup} disabled={loading}>
+          <Text style={styles.buttonText}>{loading ? 'Registering...' : 'Register'}</Text>
         </TouchableOpacity>
         
         <TouchableOpacity onPress={() => navigation.navigate('Login')}>
