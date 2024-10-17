@@ -26,8 +26,8 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-if (__DEV__){
-    console.log('FIREBASE API KEY: ', FIREBASE_API_KEY);
-}
+// if (__DEV__){
+//     console.log('FIREBASE API KEY: ', FIREBASE_API_KEY);
+// }
 
 export{ auth, db };

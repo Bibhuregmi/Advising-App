@@ -29,7 +29,10 @@ const LoginScreen = () => {
         const user = userCredential.user;
         console.log('Logged in user: ', user.uid, user.course);
 
-        //TODO: NAVIGATION TO THE HOME PAGE
+        navigation.navigate('ScheduleScreen', {
+          userId : user.uid,
+          courseID: user.course,
+        });
       }catch (error)
       {
         console.error('Login Error: ', error.message);
