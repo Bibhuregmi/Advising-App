@@ -1,134 +1,217 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Text, SafeAreaView, ScrollView } from 'react-native';
+import { View, StyleSheet, Text, SafeAreaView, ScrollView, TouchableOpacity, Modal, TextInput, Button } from 'react-native';
 import CalendarComponent from '../components/Calendar'; // Existing calendar component
-import { fetchEvents } from '../utilities/fetchevents'; //utilities for fetching events
+import { fetchEvents, addEvent, fetchSchedule } from '../utilities/fetchevents'; //utilities for fetching  and saving events
+import { AntDesign } from '@expo/vector-icons';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import { endAsyncEvent } from 'react-native/Libraries/Performance/Systrace';
 
 const ScheduleScreen = () => {
-  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]); // Default to today
-  const [sessions, setSessions] = useState([]); // for storing fetched events
-  const [loading, setLoading] = useState(true); //for loading state
+  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]); // Default to the current date
+  const [events, setEvents] = useState([]); // for storing fetched events
+  const [scheduels, setSchedules] = useState([]); //for storing fetched schedules 
+  const [loading, setLoading] = useState(true); //for loading state of events
+  const [modalVisible, setModalVisible] = useState(false);
+  const [newEventTitle, setNewEventTitle] = useState(''); //new event title state
+  const [newEventDescription, setNewEventDescription] = useState(''); //new event description state
+  const [selectedTime, setSelectedTime] = useState(new Date()); //for time picker state
+  const [isDatePickerVisible, setDatePickerVisible] = useState(false); // State for date picker visibility
 
   const course = "computerprogramming"; 
 
-  useEffect(() =>{
+    //Fetches data from db when component mounts or when course changes
+  useEffect(() => {
     const fetchData = async () => {
-        setLoading(true); 
-        const events = await fetchEvents(course);
-        setSessions(events); 
+      setLoading(true);
+      try{
+        const fetchedSchedule = await fetchSchedule(course);
+        const fetchedEvent = await fetchEvents(course); 
+        setSchedules(fetchedSchedule);
+        setEvents(fetchedEvent);
+      }catch (error){
+        console.error('Error fetching schedule or events: ', error);
+      }finally{
         setLoading(false); 
+      }
     };
     fetchData();
+  }, [course]); 
 
-  }, [course]);
+    //function to handle pressing a day on the calendar
+    const handleDayPress = (date) => {
+       setSelectedDate(date.dateString);
+    };  
+    
+  //Adding event to firestore and fetching the updated event list
+    const handleAddEvent = async () => {
+      const newEvent = {
+        title: newEventTitle,
+        description: newEventDescription,
+        date: selectedDate,
+        time: selectedTime.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'}),
+      };
+      await addEvent(course, newEvent);
 
-  const handleDayPress = (day) => {
-    const selectedDay = day.dateString;
-    setSelectedDate(selectedDay);
+      //Refreshing event after adding new event
 
-    const currentSessions = sessions.filter(session => session.days.includes(selectedDate));
-    if (currentSessions.length === 0){
-    const nearestSession = findNearestSession(selectedDate);
-    if(nearestSession){
-        setSelectedDate(nearestSession);
-    }
-  }
+      const updatedEvent = await fetchEvents(course);
+      setEvents(updatedEvent);
+
+      setModalVisible(false);
+      setNewEventTitle('');
+      setNewEventDescription('');
+      setSelectedTime(new Date());
+    };
+
+  const showDatePicker = () => {
+    setDatePickerVisible(true);
   };
 
-  const findNearestSession = (selectedDay) =>{
-    const today = new Date(selectedDay).getTime();
-    let nearestSession = null;
-    let nearestDaysDifference = Infinity;
+  const hideDatePicker = () => {
+    setDatePickerVisible(false);
+  };
+  const handleConfirm = (date) => {
+    setSelectedDate(date.toISOString().split('T')[0]); 
+    setSelectedTime(date); // Capture the entire Date object for time
+    hideDatePicker();
+  };
 
-    sessions.forEach(session => {
-        session.days.forEach(day => {
-            const sessionDate = new Date(day).getTime();
-            const daysDifference = (sessionDate - today) / (1000*3600*24);
-            if(daysDifference > 0 && daysDifference < nearestDaysDifference){
-                nearestSession = day; 
-                nearestDaysDifference = daysDifference;
-            }
-        });
+  const formatDate = (dateString) => {
+    if (!dateString) return '';
+    const date = new Date(dateString + 'T00:00:00'); //ensuring consistent timezone
+    return date.toLocaleDateString();
+  };
+
+  //mark dates with events for calendar display
+  const markedDates = {}; 
+  scheduels.forEach(schedule => {
+    schedule.days.forEach(day => {
+      if (!markedDates[day]){
+        markedDates[day] = {
+          marked: true,
+          customStyle:{
+            container:{
+              backgroundColor: 'blue',
+            },
+            text:{
+              color: '#ffffff',
+              fontWeight: 'bold',
+            },
+          },
+        };
+      }
     });
-    return nearestSession;
-  }
-  
-  const getDaysfromNow = (date) => {
-    const today = new Date(selectedDate);
-    const sessionDate = new Date(date);
-    const timeDifference = sessionDate.getTime() - today.getTime();
-    const daysDifference = Math.ceil(timeDifference / (1000* 3600 *24));
-    return daysDifference;
-  }
-  const markedDates = {};
-  sessions.forEach(session => {
-    const date = session.date; //date is in 'YYYY-MM-DD' format
-    if (!markedDates[date]) {
-      markedDates[date] = {
-        marked: true,
-        customStyles: {
-          container: {
-            backgroundColor: 'transparent',
-          },
-          text: {
-            color: '#ffffff',
-            fontWeight: 'bold',
-          },
-        },
-        events: [], // Initialize events array
-      };
-    }
-    markedDates[date].events.push(session.title); 
   });
-  const safeMarkedDates = markedDates || {}; 
-  const currentSessions = sessions.filter(session => session.days.includes(selectedDate));
-  const upcomingSessions = sessions.filter(session => session.days.some(day => day > selectedDate)); // Updated to check any day in the future
-//   // Dummy session data - replace this with actual data fetching logic later
-//   const getSessionDetails = (date) => {
-//     const allSessions = [
-//       { date: '2024-10-16', title: 'Networking Fundamentals', description: 'Learn the basics Networking and OS' },
-//       { date: '2024-10-16', title: 'Java Masterclass', description: 'Hands-on session on Java' },
-//     ];
-//     return allSessions.filter(session => session.date === date);
-//   };
 
-//   const currentSessions = getSessionDetails(selectedDate);
-//   const upcomingSessions = sessions.filter(session => session.date > selectedDate); // Example upcoming session logic
+  events.forEach(event => {
+    if (event.date) {
+      const date = event.date.split('T')[0];
+      if (!markedDates[date]) {
+        markedDates[date] = {
+          marked: true,
+          customStyles: {
+            container: {
+              backgroundColor: 'green',
+            },
+            text: {
+              color: '#ffffff',
+              fontWeight: 'bold',
+            },
+          },
+        };
+      }
+    }
+  });
+
+ const currentItems = [
+    ...scheduels.filter(schedule => schedule.days.includes(selectedDate)),
+    ...events.filter(event => event.date === selectedDate)
+  ];
 
   return (
     <SafeAreaView style={styles.safeArea}>
-    <View style={styles.container}>
-      <CalendarComponent onDayPress={handleDayPress} markedDates={safeMarkedDates}/>
-      <ScrollView style={styles.sessionDetails}>
-        <Text style={styles.header}>Sessions for {selectedDate}</Text>
-        {loading ? (
-            <Text style ={styles.loadingText}>Loading Sessions.....</Text>
-        ) : currentSessions.length > 0 ? (
-          currentSessions.map((session, index) => (
-            <View key={index} style={styles.sessionCard}>
-              <Text style={styles.sessionTitle}>{session.title}</Text>
-              <Text style={styles.sessionDescription}>{session.description}</Text>
-            </View>
-          ))
-        ) : (
-          <Text style={styles.noSessionText}>No sessions for today. {upcomingSessions.length > 0 ? 'Showing nearest upcoming session:' : 'No upcoming events.'}</Text>
-        )}
-        {upcomingSessions.length > 0 && upcomingSessions.map((session, index) => {
-            const nextSessionDay = session.days.find(day => day > selectedDate);
-            return(
-                <View key={index} style={styles.sessionCard}>
-                <Text style={styles.sessionTitle}>{session.title}</Text>
-                <Text style={styles.sessionDescription}>{session.description}</Text>
-                {nextSessionDay && (
-                  <Text style={styles.sessionDaysAway}>
-                    {getDaysfromNow(nextSessionDay)} days from today.
-                  </Text>
+        <View style={styles.container}> 
+
+            {/* Calendar Component */}
+            <CalendarComponent onDayPress={handleDayPress} markedDates={markedDates}/>
+
+            {/* Session Details */}
+           <ScrollView style = {styles.sessionDetails}>
+              <Text style = {styles.header}>Items for {formatDate(selectedDate)}</Text>
+              {loading ? (
+                <Text style = {styles.loadingText}>Loading Schedule and Events......</Text>
+              ) : (
+                <>
+                {currentItems.length > 0 ? (
+                  currentItems.map((item, index) => (
+                    <View key = {index} style = {styles.sessionCard}>
+                      <Text style={styles.sessionTitle}>{item.title}</Text>
+                      <Text style={styles.sessionDescription}>{item.description}</Text>
+                      <Text style={styles.sessionTime}>{item.time}</Text>
+                      <Text style={styles.sessionType}>
+                        {item.hasOwnProperty('isPredefined') ? 'Schedule' : 'Event'}
+                      </Text>
+                    </View>
+                  ))
+                ) : (
+                  <Text style={styles.noSessionText}>No items for today.</Text>
                 )}
-              </View>
-            );
-        })}
-      </ScrollView>
-    </View>
-  </SafeAreaView>
+                </>
+              )}
+           </ScrollView>
+
+            {/* Add event button */}
+            <TouchableOpacity style= {styles.addButton} onPress={() => setModalVisible(true)}>
+                <AntDesign name='plus' size={30} color= '#ffffff' />
+            </TouchableOpacity>
+
+            {/* Modal for adding event */}
+            <Modal visible={modalVisible} animationType='fade' transparent= {true}>
+                <View style={styles.modalContainer}>
+                    <View style={styles.modalContent}>
+                        <Text style={styles.modalHeader}>Add New Event</Text>
+                        <TextInput
+                        style = {styles.input}
+                        placeholder='Event Title'
+                        placeholderTextColor='#ccc'
+                        value={newEventTitle}
+                        onChangeText={setNewEventTitle}
+                        />
+                        <TextInput
+                        style={styles.input}
+                        placeholder='Event Description'
+                        placeholderTextColor='#ccc'
+                        value={newEventDescription}
+                        onChangeText={setNewEventDescription}
+                        />
+                       {/* DateTimePicker Trigger Button */}
+                        <TouchableOpacity style={styles.button} onPress={showDatePicker}>
+                            <Text style={styles.buttonText}>
+                            {selectedTime ? `Selected: ${selectedDate} ${selectedTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
+                            : 'Select Date and Time'}
+                            </Text>
+                        </TouchableOpacity>
+
+                        {/* DateTimePicker */}
+                        <DateTimePickerModal
+                            isVisible={isDatePickerVisible}
+                            mode="datetime"
+                            onConfirm={handleConfirm}
+                            onCancel={hideDatePicker}
+                            textColor="#000" // iOS text color customization
+                        />
+                        <TouchableOpacity style={styles.saveButton} onPress={handleAddEvent}>
+                            <Text style={styles.saveButtonText}>Save Event</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity style={styles.saveButton} onPress={() => setModalVisible(false)}>
+                            <Text style={styles.saveButtonText}>Cancel</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
+        </View>
+    </SafeAreaView>
   );
 };
 
@@ -180,7 +263,102 @@ const styles = StyleSheet.create({
         color: '#ffffff',
         fontSize: 16,
         fontWeight: 'bold',
-      }
+    },
+    sessionTime: {
+        color: '#aaaaaa',
+        fontSize: 12,
+        marginTop: 5,
+    },
+      sessionType: {
+        color: '#ff6347',
+        fontSize: 12,
+        marginTop: 5,
+        fontStyle: 'italic',
+    },
+    addButton:{
+        position: 'absolute',
+        bottom: 20,
+        right: 20,
+        backgroundColor: '#ff6347',
+        borderRadius: 50,
+        padding: 10,
+    },
+    addButtonText:{
+        color: '#fff',
+        fontSize: 24,
+        fontWeight: 'bold',
+    },
+    modalView:{
+        flex: 1,
+        justifyContent: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+        padding: 20,
+    },
+
+    modalContainer:{
+        flex: 1,
+        justifyContent: 'center', // Centers vertically
+        alignItems: 'center', // Centers horizontally
+        backgroundColor: 'rgba(0, 0, 0, 0.8)', // Transparent background
+        padding: 20,
+    },
+    modalContent:{
+        width: '80%', // Modal width
+        height: '50%', // Modal height
+        backgroundColor: '#1E1E1E', // Dark background
+        borderRadius: 10, // Rounded corners
+        padding: 20, // Internal padding
+        justifyContent: 'center',
+    },
+    modalHeader:{
+        color: '#ff6347',
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginBottom: 10,
+    },
+    input:{
+        backgroundColor: '#333',
+        color: '#fff',
+        paddingHorizontal: 15,
+        paddingVertical: 10,
+        borderRadius: 5,
+        marginTop: 5,
+        marginBottom: 10,
+        borderStyle: "solid",
+        borderColor: "#ff6347",
+        borderWidth: 1,
+    },
+    button: {
+        backgroundColor: '#333',
+        color: '#fff',
+        paddingHorizontal: 15,
+        paddingVertical: 10,
+        borderRadius: 5,
+        marginTop: 5,
+        marginBottom: 10,
+        borderStyle: "solid",
+        borderColor: "#ff6347",
+        borderWidth: 1,
+    },
+    buttonText: {
+        color: '#fff',
+        fontSize: 16,
+    },
+    saveButton:{
+        backgroundColor: '#121212',
+        padding: 15,
+        borderRadius: 50,
+        borderStyle: "solid",
+        borderColor: "#38b6ff",
+        borderWidth: 1,
+        alignItems: 'center',
+        marginTop: 25,
+    },
+    saveButtonText:{
+        color: '#fff',
+        fontWeight: '700',
+        fontSize: 16,
+    },
   });
   
   export default ScheduleScreen;
