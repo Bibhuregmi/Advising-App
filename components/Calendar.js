@@ -6,6 +6,7 @@ const screenHeight = Dimensions.get('window').height;
 const currentDate = new Date().toISOString().split('T')[0];
 
 const CalendarComponent = ({ onDayPress, markedDates }) => {
+    //Render Event Labels
     const renderEventLabels = (day) => {
     const events = markedDates[day]?.events || [];
     return events.map((event, index) => (
