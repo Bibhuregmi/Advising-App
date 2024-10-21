@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebase';
 import logo from '../assets/advisingLogo.png';
+import { fetchUserDataFromFirestore } from '../utilities/userData';
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
@@ -27,18 +28,21 @@ const LoginScreen = () => {
       try{
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
-        console.log('Logged in user: ', user.uid, user.course);
-
-        navigation.navigate('ScheduleScreen', {
-          userId : user.uid,
-          courseID: user.course,
+        // console.log('Logged in user: ', user.uid);
+        const userData = await fetchUserDataFromFirestore(user.uid);
+        console.log('User data fetched:', userData);
+        console.log('Navigating to Home with: ', {
+          userId: user.uid,
+          courseID: userData.course,  
         });
+        navigation.navigate('Home', {
+          userId: user.uid,
+          course: userData.course,
+        })
       }catch (error)
       {
         console.error('Login Error: ', error.message);
       }
-      
-      //TODO: Contains the navigation to the home page 
   } 
   }, [email,password,validateForm]);
 
