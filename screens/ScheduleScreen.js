@@ -4,7 +4,6 @@ import CalendarComponent from '../components/Calendar'; // Existing calendar com
 import { fetchEvents, addEvent, fetchSchedule } from '../utilities/fetchevents'; //utilities for fetching  and saving events
 import { AntDesign } from '@expo/vector-icons';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
-import { endAsyncEvent } from 'react-native/Libraries/Performance/Systrace';
 
 const ScheduleScreen = () => {
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]); // Default to the current date
