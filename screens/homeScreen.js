@@ -4,6 +4,7 @@ import AsyncStorage, { useAsyncStorage } from '@react-native-async-storage/async
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons'; // For icons
 import placeholderImage from '../assets/placeholder.png'; // Placeholder image
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const HomeScreen = ({user}) => {
     const [userData, setUserData] = useState({});
@@ -33,74 +34,212 @@ const HomeScreen = ({user}) => {
         return(<Text>Loading.......</Text>);
     }
     const userName = userData?.firstName || 'User';
+
+    const getGreetingMessage = () => {
+        const currentHour = new Date().getHours();
+        let greeting = '';
+        if (currentHour < 12){
+            greeting = "Good Morning";
+        }else if (currentHour < 18){
+            greeting = "Good Afternoon";
+        }else{
+            greeting = "Good Evening"
+        }
+        return `${greeting}!`;
+    } 
     return (
+    <SafeAreaView style={styles.container}>
+        {/* Custom Header */}
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}></Text>
+        <TouchableOpacity style={styles.home} onPress={() => navigation.navigate('Home')}>
+          <Icon name="home-outline" size={30} color="white" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Advising App</Text>
+        <TouchableOpacity style={styles.editProfileIcon} onPress={() => navigation.navigate('Home')}>
+          <Icon name="pencil-outline" size={30} color="white" />
+        </TouchableOpacity>
+      </View>
     <View style={styles.container}>
       {/* Profile Section */}
       <Image
         source={userData.profilePic ? { uri: userData.profilePic } : placeholderImage}
         style={styles.profileImage}
       />
-      <Text style={styles.welcomeText}>Welcome {userName}!</Text>
+      <Text style={styles.welcomeText}>{getGreetingMessage()}</Text>
+      <Text style={styles.name}>{userName}</Text>
       <Text style={styles.courseText}>{userData.course}</Text>
 
       {/* Navigation Icons */}
-      <View style={styles.iconGrid}>
+    <View style={styles.iconGrid}>
+        {/*First Row*/}
+    <View style = {styles.iconRow}> 
         <TouchableOpacity onPress={() => navigation.navigate('ScheduleScreen')}>
           <View style={styles.iconContainer}>
-            <Icon name="calendar-outline" size={40} color="#000" />
+            <Icon name="calendar-outline" size={40} color="#ccc" />
             <Text style={styles.iconText}>Schedule</Text>
           </View>
         </TouchableOpacity>
-        {/* Add more icons as needed */}
-        {/* Repeat for other sections like Survey, Notifications, etc. */}
-      </View>
+        {/* Discussion */}
+        <TouchableOpacity onPress={() => navigation.navigate('Home')}> 
+            <View style = {styles.iconContainer}>
+                <Icon name = "chatbubbles-outline" size ={40} color = '#ccc' />
+                <Text style = {styles.iconText}>Discussion</Text>
+            </View>
+        </TouchableOpacity> 
+         {/* Notification */}
+        <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+            <View style = {styles.iconContainer}>
+                <Icon name = "notifications-outline" size ={40} color = '#ccc' />
+                <Text style = {styles.iconText}>Notification</Text>
+            </View>
+        </TouchableOpacity>
+        </View>
+        {/*Second Row*/}
+        <View style = {styles.iconRow}>
+         {/* Survey Icon */}
+         <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+            <View style = {styles.iconContainer}>
+                <Icon name = "clipboard-outline" size ={40} color = '#ccc' />
+                <Text style = {styles.iconText}>Survey</Text>
+            </View>
+        </TouchableOpacity>
+         {/* Map */}
+         <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+            <View style = {styles.iconContainer}>
+                <Icon name = "location-outline" size ={40} color = '#ccc' />
+                <Text style = {styles.iconText}>Map</Text>
+            </View>
+        </TouchableOpacity>
+        {/*Resources*/}
+        <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+            <View style = {styles.iconContainer}>
+                <Icon name = "book-outline" size ={40} color = '#ccc' />
+                <Text style = {styles.iconText}>Resources</Text>
+            </View>
+        </TouchableOpacity>
+        </View>
 
-      {/* Profile Edit Icon */}
+         {/*Third Row*/}
+         <View style = {styles.iconRow}>
+         {/*Course Outcome*/}
+         <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+            <View style = {styles.iconContainer}>
+                <Icon name = "analytics-outline" size ={40} color = '#ccc' />
+                <Text style = {styles.iconText}>Course Outcome</Text>
+            </View>
+        </TouchableOpacity>
+         {/* Map */}
+         <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+            <View style = {styles.iconContainer}>
+                <Icon name = "map-outline" size ={40} color = '#ccc' />
+                <Text style = {styles.iconText}>College Tour</Text>
+            </View>
+        </TouchableOpacity>
+        {/*Resources*/}
+        <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+            <View style = {styles.iconContainer}>
+                <Icon name = "logo-github" size ={40} color = '#ccc' />
+                <Text style = {styles.iconText}>Developer Info</Text>
+            </View>
+        </TouchableOpacity>
+        </View>
     </View>
+    </View>
+    </SafeAreaView>
     );    
 };
 
 const styles = StyleSheet.create({
     container: {
-      flex: 1,
-      alignItems: 'center',
-      justifyContent: 'center',
-      backgroundColor: '#f5f5f5',
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'felx-start',
+        backgroundColor: '#121212',
+        paddingTop: 75,
+    },
+    header: {
+        width: '100%',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingHorizontal: 20,
+        paddingVertical: 10,
+        paddingTop: 10,
+        paddingBottom: 10,
+        backgroundColor: '#121212',
+        position: 'absolute',
+        top: 75,
+        zIndex: 1,
+      },
+    home:{},
+    headerTitle: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: '#38b6ff',
+        textAlign: 'center',
+        position: 'absolute',
+        left: '50%',
+        transform: [{ translateX: -30 }],
     },
     profileImage: {
-      width: 100,
-      height: 100,
-      borderRadius: 50,
-      marginBottom: 20,
+        width: 100,
+        height: 100,
+        borderRadius: 50,
+        marginBottom: 20,
     },
     welcomeText: {
-      fontSize: 24,
-      fontWeight: 'bold',
+        fontSize: 24,
+        color: 'white',
+    },
+    name:{
+        fontSize: 20,
+        color: "#38b6ff",
+        fontWeight: 'bold'
     },
     courseText: {
-      fontSize: 18,
-      color: '#666',
-      marginBottom: 30,
+        fontSize: 18,
+        color: '#666',
+        marginBottom: 30,
     },
     iconGrid: {
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      justifyContent: 'space-around',
-      width: '80%',
+        width: '72.3%',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    iconRow:{
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginBottom: 20,
+        width: '100%',
+        paddingHorizontal: 10,
     },
     iconContainer: {
-      alignItems: 'center',
-      margin: 20,
+        alignItems: 'center',
+        justifyContent: 'center', 
+        width: 120, 
+        height: 120, 
+        borderWidth: 2, 
+        borderColor: '#38b6ff', 
+        borderRadius: 10, 
+        backgroundColor: '#1e1e1e',
+        marginHorizontal: 10,
+        paddingTop: 20,
     },
     iconText: {
-      marginTop: 10,
-      fontSize: 16,
+        marginTop: 10,
+        fontSize: 12,
+        color: '#ccc',
+        fontWeight: 'condensed',
     },
     profileIcon: {
-      position: 'absolute',
-      top: 40,
-      right: 20,
+        position: 'absolute',                                                                                                                                                                                           
+        top: 40,
+        right: 20, 
     },
+    editProfileIcon: {
+       marginLeft: 'auto',
+    },    
 }); 
 
 export default HomeScreen;
