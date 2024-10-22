@@ -32,7 +32,7 @@ const App = () => {
           const userData = await fetchUserDataFromFirestore(authUser.uid);
           const userProfile = {
             firstName: userData.firstName || 'User',
-            latName: userData.latNameName || 'User',
+            lastName: userData.lastName || 'User',
             profilePicture: userData.photoURL || null, 
             course: userData.course,
           };
