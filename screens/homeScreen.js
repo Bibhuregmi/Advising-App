@@ -56,7 +56,7 @@ const HomeScreen = ({user}) => {
           <Icon name="home-outline" size={30} color="white" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Advising App</Text>
-        <TouchableOpacity style={styles.editProfileIcon} onPress={() => navigation.navigate('Home')}>
+        <TouchableOpacity style={styles.editProfileIcon} onPress={() => navigation.navigate('EditProfile')}>
           <Icon name="pencil-outline" size={30} color="white" />
         </TouchableOpacity>
       </View>
@@ -137,7 +137,7 @@ const HomeScreen = ({user}) => {
             </View>
         </TouchableOpacity>
         {/*Resources*/}
-        <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+        <TouchableOpacity onPress={() => navigation.navigate('DevInfo')}>
             <View style = {styles.iconContainer}>
                 <Icon name = "logo-github" size ={40} color = '#ccc' />
                 <Text style = {styles.iconText}>Developer Info</Text>
