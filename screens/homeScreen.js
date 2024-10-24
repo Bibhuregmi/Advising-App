@@ -5,36 +5,64 @@ import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons'; // For icons
 import placeholderImage from '../assets/placeholder.png'; // Placeholder image
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { fetchUserDataFromFirestore } from '../utilities/userData';
+import { getAuth } from 'firebase/auth';
+import { useFocusEffect } from '@react-navigation/native';
+import { useCallback } from 'react';
 
 const HomeScreen = ({user}) => {
+    //states for the userdata, loading, profileimage
     const [userData, setUserData] = useState({});
     const [loading, setLoading] = useState(true);
+    const [profileImage, setProfileImage] = useState(null);
     const navigation = useNavigation();
 
-    useEffect( () => {
+    //using foucs effect to re-fetch data when ever the screen comes to focus
+   useFocusEffect(
+    useCallback( () =>{
         const fetchUserData = async () => {
-            try {
+            try{
+                //fetching user data from cache
                 const cachedUserData = await AsyncStorage.getItem('userData');
-                if (cachedUserData){
-                   const parsedData = JSON.parse(cachedUserData);
-                   console.log('Fetched user data: ', parsedData);
-                   setUserData(parsedData);
+                if (cachedUserData) {
+                    const parsedData = JSON.parse(cachedUserData);
+                    console.log('Fetched user Data: ', parsedData); 
+                    setUserData(parsedData); //updating state with cached data
+                    console.log('Profile Image url:', userData.profileImage);
+                    //check if user have a profile image and setting it
+                    if(parsedData.profileImage) {
+                        setProfileImage(parsedData.profileImage);
+                    }
                 }else{
-                    console.warn('NO user data found in AsyncStorage');
+                    console.error('No user data is found in AsyncStorage') //error message
                 }
-            }catch (error){
-                console.error('Error fetching user data: ', error);
-            }finally{
-                setLoading(false); 
+                //getting the current authenticated user
+                const auth = getAuth();
+                const user = auth.currentUser;
+                if(user){
+                    const userId = user.uid;
+                    const updatedUserData = await fetchUserDataFromFirestore(userId); //fetching data from firestore
+                    if (updatedUserData && updatedUserData.profileImage){
+                        setProfileImage(updatedUserData.profileImage); //updating profile image with the latest profile image update from db
+                    }
+                }
+            }catch(error){
+                console.error('Error fetching user data or profile image:', error);
+            }
+            finally{
+                setLoading(false);
             }
         };
         fetchUserData();
-    }, []);
+    }, [navigation])
+   );
+
     if (loading){
         return(<Text>Loading.......</Text>);
     }
     const userName = userData?.firstName || 'User';
 
+    //function to get the dynamic greeting message based on the time of the day
     const getGreetingMessage = () => {
         const currentHour = new Date().getHours();
         let greeting = '';
@@ -63,7 +91,7 @@ const HomeScreen = ({user}) => {
     <View style={styles.container}>
       {/* Profile Section */}
       <Image
-        source={userData.profilePic ? { uri: userData.profilePic } : placeholderImage}
+        source={userData.profileImage ? { uri: userData.profileImage } : placeholderImage}
         style={styles.profileImage}
       />
       <Text style={styles.welcomeText}>{getGreetingMessage()}</Text>
