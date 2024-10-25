@@ -5,7 +5,9 @@ import { Picker } from '@react-native-picker/picker';
 import logo from '../assets/advisingLogo.png';
 import { createUserWithEmailAndPassword }  from 'firebase/auth';
 import { setDoc, doc } from 'firebase/firestore';
-import { auth, db } from '../firebase';
+import { auth, db} from '../firebase';
+import placeholder from '../assets/placeholder.png';
+
 
 const SignupScreen = () => {
   const [firstName, setFirstName] = useState('');
@@ -55,11 +57,12 @@ const SignupScreen = () => {
                 email,
                 course,
                 gender: 'Not Specified',
-                bio: 'Student at Niagara College'
+                bio: 'Student at Niagara College',
+                profileImage: placeholder,
             });
             console.log ('User registerd for the course: ', course);
             console.log('New account has been created');
-            navigation.navigate('Login'); //navigate to the login screen
+            navigation.navigate('Home'); //navigate to the login screen
         } catch(error){
             setErrors({...errors, signup: error.message});
             console.error('Signup error:', error.message);
