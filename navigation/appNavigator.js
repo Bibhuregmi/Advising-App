@@ -7,6 +7,7 @@ import ScheduleScreen from "../screens/ScheduleScreen";
 import HomeScreen from "../screens/homeScreen";
 import TeamMembers from "../screens/developerinfo";
 import EditProfile from "../screens/editprofile";
+import Resources from "../screens/resources";
 const stack = createNativeStackNavigator();
 
 const AppNavigator = ({user, userData}) => {
@@ -35,6 +36,12 @@ const AppNavigator = ({user, userData}) => {
                     <stack.Screen
                         name = "DevInfo"
                         component={TeamMembers}
+                        options={{headerShown: false}}
+                    />
+
+                    <stack.Screen
+                        name = "Resources"
+                        component={Resources}
                         options={{headerShown: false}}
                     />
                 </>
@@ -69,6 +76,11 @@ const AppNavigator = ({user, userData}) => {
                     <stack.Screen
                         name = "DevInfo"
                         component={TeamMembers}
+                        options={{headerShown: false}}
+                    />
+                     <stack.Screen
+                        name = "Resources"
+                        component={Resources}
                         options={{headerShown: false}}
                     />
                 </>
