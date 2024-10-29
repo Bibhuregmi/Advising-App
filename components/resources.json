@@ -1,0 +1,125 @@
+{
+    "articles": [
+        {
+           "id" : "1",
+            "title" : "Data Structure and Algorithm",
+            "author": "Bibhu",
+            "source": "Geeks for Geeks",
+            "thumbnailUrl": "https://media.geeksforgeeks.org/wp-content/cdn-uploads/20230706095706/intro-data-structure-%E2%80%93-1.png",
+            "link": "https://www.geeksforgeeks.org/data-structures/"
+        },
+        {
+            "id" : "2",
+            "title" : "Java Crash Course",
+            "author": "Shishir",
+            "source": "Cursora",
+            "thumbnailUrl": "https://media.geeksforgeeks.org/wp-content/cdn-uploads/20230706095706/intro-data-structure-%E2%80%93-1.png",
+            "link": "https://www.geeksforgeeks.org/data-structures/"
+        },
+        {
+            "id" : "3",
+            "title" : "UI/UX masterclass",
+            "author": "Raj",
+            "source": "Udemy",
+            "thumbnailUrl": "https://media.geeksforgeeks.org/wp-content/cdn-uploads/20230706095706/intro-data-structure-%E2%80%93-1.png",
+            "link": "https://www.geeksforgeeks.org/data-structures/"
+        },
+        {
+            "id" : "4",
+            "title" : "React Native Course",
+            "author": "PrimeAgean",
+            "source": "Netflix",
+            "thumbnailUrl": "https://media.geeksforgeeks.org/wp-content/cdn-uploads/20230706095706/intro-data-structure-%E2%80%93-1.png",
+            "link": "https://www.geeksforgeeks.org/data-structures/"
+        },
+        {
+            "id" : "5",
+            "title" : "Data Structure Tutorial",
+            "author": "gfg",
+            "source": "Geeks for Geeks",
+            "thumbnailUrl": "https://media.geeksforgeeks.org/wp-content/cdn-uploads/20230706095706/intro-data-structure-%E2%80%93-1.png",
+            "link": "https://www.geeksforgeeks.org/data-structures/"
+        }
+    ],
+
+    "textbooks": [
+        {
+            "id" : "1",
+            "title" : "Eloquent Javascript",
+            "author" : "Marjin Haverbeke",
+            "link" : "https://eloquentjavascript.net/",
+            "thumbnailUrl" : "https://eloquentjavascript.net/img/cover.jpg" 
+        },
+        {
+            "id" : "2",
+            "title" : "Eloquent Javascript",
+            "author" : "Marjin Haverbeke",
+            "link" : "https://eloquentjavascript.net/",
+            "thumbnailUrl" : "https://eloquentjavascript.net/img/cover.jpg" 
+        },
+        {
+            "id" : "3",
+            "title" : "Eloquent Javascript",
+            "author" : "Marjin Haverbeke",
+            "link" : "https://eloquentjavascript.net/",
+            "thumbnailUrl" : "https://eloquentjavascript.net/img/cover.jpg" 
+        },
+        {
+            "id" : "4",
+            "title" : "Eloquent Javascript",
+            "author" : "Marjin Haverbeke",
+            "link" : "https://eloquentjavascript.net/",
+            "thumbnailUrl" : "https://eloquentjavascript.net/img/cover.jpg" 
+        },
+        {
+            "id" : "5",
+            "title" : "Eloquent Javascript",
+            "author" : "Marjin Haverbeke",
+            "link" : "https://eloquentjavascript.net/",
+            "thumbnailUrl" : "https://eloquentjavascript.net/img/cover.jpg" 
+        }
+    ],
+
+    "videos" : [
+        {
+            "id" : "1", 
+            "title" : "React Native in 100 Seconds",
+            "author" : "Fireship",
+            "source" : "YouTube", 
+            "link" : "https://www.youtube.com/watch?v=gvkqT_Uoahw",
+            "thumbnailUrl" : "https://i.ytimg.com/vi/gvkqT_Uoahw/hq720.jpg?sqp=-…AFwAcABBg==&rs=AOn4CLDevgUWo8zWdZ_etD3xWmSJOhRRuQ"
+        },
+        {
+            "id" : "2", 
+            "title" : "React Native in 100 Seconds",
+            "author" : "Fireship",
+            "source" : "YouTube", 
+            "link" : "https://www.youtube.com/watch?v=gvkqT_Uoahw",
+            "thumbnailUrl" : "https://i.ytimg.com/vi/gvkqT_Uoahw/hq720.jpg?sqp=-…AFwAcABBg==&rs=AOn4CLDevgUWo8zWdZ_etD3xWmSJOhRRuQ"
+        },
+        {
+            "id" : "3", 
+            "title" : "React Native in 100 Seconds",
+            "author" : "Fireship",
+            "source" : "YouTube", 
+            "link" : "https://www.youtube.com/watch?v=gvkqT_Uoahw",
+            "thumbnailUrl" : "https://i.ytimg.com/vi/gvkqT_Uoahw/hq720.jpg?sqp=-…AFwAcABBg==&rs=AOn4CLDevgUWo8zWdZ_etD3xWmSJOhRRuQ"
+        },
+        {
+            "id" : "4", 
+            "title" : "React Native in 100 Seconds",
+            "author" : "Fireship",
+            "source" : "YouTube", 
+            "link" : "https://www.youtube.com/watch?v=gvkqT_Uoahw",
+            "thumbnailUrl" : "https://i.ytimg.com/vi/gvkqT_Uoahw/hq720.jpg?sqp=-…AFwAcABBg==&rs=AOn4CLDevgUWo8zWdZ_etD3xWmSJOhRRuQ"
+        },
+        {
+            "id" : "5", 
+            "title" : "React Native in 100 Seconds",
+            "author" : "Fireship",
+            "source" : "YouTube", 
+            "link" : "https://www.youtube.com/watch?v=gvkqT_Uoahw",
+            "thumbnailUrl" : "https://i.ytimg.com/vi/gvkqT_Uoahw/hq720.jpg?sqp=-…AFwAcABBg==&rs=AOn4CLDevgUWo8zWdZ_etD3xWmSJOhRRuQ"
+        }
+    ]
+}
