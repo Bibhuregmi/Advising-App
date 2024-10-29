@@ -140,7 +140,7 @@ const HomeScreen = ({user}) => {
             </View>
         </TouchableOpacity>
         {/*Resources*/}
-        <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+        <TouchableOpacity onPress={() => navigation.navigate('Resources')}>
             <View style = {styles.iconContainer}>
                 <Icon name = "book-outline" size ={40} color = '#ccc' />
                 <Text style = {styles.iconText}>Resources</Text>
