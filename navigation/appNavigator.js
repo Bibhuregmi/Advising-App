@@ -9,6 +9,7 @@ import TeamMembers from "../screens/developerinfo";
 import EditProfile from "../screens/editprofile";
 import Resources from "../screens/resources";
 import Discussion from "../screens/discussion";
+
 const stack = createNativeStackNavigator();
 
 const AppNavigator = ({user, userData}) => {
@@ -45,6 +46,7 @@ const AppNavigator = ({user, userData}) => {
                         component={Resources}
                         options={{headerShown: false}}
                     />
+
                     <stack.Screen
                         name = "Discussion"
                         component={Discussion}
@@ -89,6 +91,7 @@ const AppNavigator = ({user, userData}) => {
                         component={Resources}
                         options={{headerShown: false}}
                     />
+
                     <stack.Screen
                         name = "Discussion"
                         component={Discussion}
