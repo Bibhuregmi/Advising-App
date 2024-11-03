@@ -109,7 +109,7 @@ const HomeScreen = ({user}) => {
           </View>
         </TouchableOpacity>
         {/* Discussion */}
-        <TouchableOpacity onPress={() => navigation.navigate('Home')}> 
+        <TouchableOpacity onPress={() => navigation.navigate('Discussion')}> 
             <View style = {styles.iconContainer}>
                 <Icon name = "chatbubbles-outline" size ={40} color = '#ccc' />
                 <Text style = {styles.iconText}>Discussion</Text>
