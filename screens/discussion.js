@@ -3,52 +3,88 @@ import React, { useEffect, useState } from 'react'
 import { getAuth } from 'firebase/auth';
 import  Icon  from 'react-native-vector-icons/Ionicons'; 
 import { fetchUserDataFromFirestore } from '../utilities/userData';
+import { setupChatListner, sendMessage} from '../utilities/fetchChat';
 
 
 const Discussion = () => {
     const [userName, setUserName] = useState('Anonymous');
     const [message, setMessage] = useState('');
-    const [messages, setMessages] = useState([
-        {id: '1', text: 'Welcome to app!', timestamp: '11:11 PM', user: 'developer'},
-    ]);
+    const [messages, setMessages] = useState([]);
     const [currentUser, setCurrentUser] = useState(null);
 
     useEffect(() => {
+      //fetching current user from auth
         const auth = getAuth();
         const user = auth.currentUser;
         if (user){
             setCurrentUser(user);
         const getUserData = async() => {
             try{
+              //fetching user data from firestore 
                 const userData = await fetchUserDataFromFirestore(user.uid);
                 if (userData && userData.firstName){
-                    setUserName(userData.firstName);
+                    setUserName(userData.firstName); //setusername as the userName of the current authenticated user
                 }
             }catch(error){
                 console.error('Error Fetching data', error);
             }
         };
         getUserData();
+
+        //setup realtime chat listner for the specified course
+        const unsubscribe = setupChatListner('computerprogramming', (newMessages) => {
+          setMessages(prevMessages => {
+           const combinedMessages = [...prevMessages, ...newMessages]; //combining new message with the existing messages 
+           //removinng duplicate message based on the id
+           const uniqueMessages = Array.from(
+            new Map(combinedMessages.map((msg) => [msg.id, msg])).values() 
+           );
+           //sorting messages based on the timestamp
+           uniqueMessages.sort((a,b) => a.timestamp.seconds - b.timestamp.seconds);
+           return uniqueMessages; //returns sorted unique messages
+          });
+        });
+        //cleanup when component unmounts
+        return () => unsubscribe && unsubscribe();
     }else{
         console.error('No user is logged in!');
     }
     },[]);
 
-    const handelSend= () => {
+    //function to hundle sending messages 
+    const handelSend= async () => {
         if (message.trim() !== ''){
+          //creating a new message object 
             const newMessage = {
-                id: Date.now().toString(),
+                id: Date.now().toString(), //unique id based on timestamp
                 text: message,
-                timestamp: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+                timestamp: new Date(), //current date and time 
                 user: userName,
+                userId: currentUser.uid,
             };
-            setMessages((prevMessages) => [...prevMessages, newMessage]);
-            setMessage('');
+           try{
+            //sending message data to firestore
+            await sendMessage('computerprogramming', newMessage);
+            setMessage(''); //clearing input feild once send
+           }catch(error){
+            console.error('Error sending messages: ', error);
+           }
         }
 
     }
+    //function to format timestamp to display 
+    const formatTimestamp = (timestamp) => {
+      if (timestamp && timestamp.seconds) {
+        return new Date(timestamp.seconds * 1000).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+      }
+      return 'Timestamp not available';
+    };
+    
+    //function to render individual messages
     const renderMessges = ({item}) => {
-        const isCurrentUser = item.user === userName;
+        const isCurrentUser = item.message.user === userName; //checking if the message is from currnet user
+        // console.log('Comparing user: ', item.user, 'with current user: ', userName)
+        // console.log('Rendering message with timestamp:', item); 
         return(  
         <View
             style= {[
@@ -56,9 +92,9 @@ const Discussion = () => {
                 isCurrentUser ? styles.currentUserBubble : styles.otherUserBubble,
             ]}
         >
-            <Text style={styles.userName}>{item.user}</Text>
-            <Text style= {styles.messageText}>{item.text}</Text>
-            <Text style = {styles.timestamp}>{item.timestamp}</Text>
+            <Text style={styles.userName}>{item.message.user}</Text>
+            <Text style= {styles.messageText}>{item.message.text || 'Message not available'}</Text>
+            <Text style = {styles.timestamp}>{formatTimestamp(item.timestamp) || 'Timestamp not available'}</Text>
         </View>
         );
     };
