@@ -7,6 +7,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { addpredefinedEvents } from './utilities/addpredefinedEvents';
 import { ActivityIndicator, View } from 'react-native';
 import { fetchUserDataFromFirestore, storeUserData } from './utilities/userData';
+import * as Notifications from 'expo-notifications';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 const App = () => {
   //states and variables 
@@ -49,6 +51,13 @@ const App = () => {
       });
       return unsubscribe;
     }
+    const requestPermission = async () => {
+      const {status} = await Notifications.requestPermissionsAsync();
+      if (status !== 'granted') {
+        alert('Notification permission not granted');
+      }
+    };
+    requestPermission();
     initializePredefinedEvents(); //call if only the events have not been added before
     const unsubscribeAuth = setupAuthListner();
     return () => unsubscribeAuth(); //cleans listner when the component unmounts
@@ -64,9 +73,11 @@ const App = () => {
 
   //rendering navigation
   return (
+    <GestureHandlerRootView style= {{flex:1}}>
     <NavigationContainer>
       <AppNavigator user={user} userData={userData}/>
     </NavigationContainer>
+    </GestureHandlerRootView>
   );
 };
 
