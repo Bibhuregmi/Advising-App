@@ -9,6 +9,7 @@ import TeamMembers from "../screens/developerinfo";
 import EditProfile from "../screens/editprofile";
 import Resources from "../screens/resources";
 import Discussion from "../screens/discussion";
+import Notification from "../screens/notificationScreen";
 
 const stack = createNativeStackNavigator();
 
@@ -50,6 +51,11 @@ const AppNavigator = ({user, userData}) => {
                     <stack.Screen
                         name = "Discussion"
                         component={Discussion}
+                        options={{headerShown: false}}
+                    />
+                    <stack.Screen
+                        name = "Notification"
+                        component={Notification}
                         options={{headerShown: false}}
                     />
                 </>
@@ -95,6 +101,11 @@ const AppNavigator = ({user, userData}) => {
                     <stack.Screen
                         name = "Discussion"
                         component={Discussion}
+                        options={{headerShown: false}}
+                    />
+                    <stack.Screen
+                        name = "Notification"
+                        component={Notification}
                         options={{headerShown: false}}
                     />
                 </>
