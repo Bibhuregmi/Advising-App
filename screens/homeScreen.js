@@ -9,6 +9,7 @@ import { fetchUserDataFromFirestore } from '../utilities/userData';
 import { getAuth } from 'firebase/auth';
 import { useFocusEffect } from '@react-navigation/native';
 import { useCallback } from 'react';
+import notificationService, { scheduleNotification } from '../utilities/notificationService';
 
 const HomeScreen = ({user}) => {
     //states for the userdata, loading, profileimage
@@ -16,10 +17,16 @@ const HomeScreen = ({user}) => {
     const [loading, setLoading] = useState(true);
     const [profileImage, setProfileImage] = useState(null);
     const navigation = useNavigation();
+    const [notificationsCount, setNotificationsCount] = useState(0); //new state for notification
 
     //using foucs effect to re-fetch data when ever the screen comes to focus
    useFocusEffect(
     useCallback( () =>{
+        const fetchNotificationCount = async () => {
+            const notification = await scheduleNotification();
+            setNotificationsCount((prevCount) => prevCount +1);
+        };
+
         const fetchUserData = async () => {
             try{
                 //fetching user data from cache
@@ -53,6 +60,7 @@ const HomeScreen = ({user}) => {
                 setLoading(false);
             }
         };
+        fetchNotificationCount();
         fetchUserData();
     }, [navigation])
    );
@@ -116,10 +124,15 @@ const HomeScreen = ({user}) => {
             </View>
         </TouchableOpacity> 
          {/* Notification */}
-        <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+        <TouchableOpacity onPress={() => navigation.navigate('Notification')}>
             <View style = {styles.iconContainer}>
                 <Icon name = "notifications-outline" size ={40} color = '#ccc' />
                 <Text style = {styles.iconText}>Notification</Text>
+                {notificationsCount > 0 && (
+                    <View style={styles.notificationBadge}>
+                        <Text style={styles.notificationBadgeText}>{notificationsCount}</Text>
+                    </View>
+                )}
             </View>
         </TouchableOpacity>
         </View>
@@ -267,7 +280,23 @@ const styles = StyleSheet.create({
     },
     editProfileIcon: {
        marginLeft: 'auto',
-    },    
+    },  
+    notificationBadge: {
+        position: 'absolute',
+        top: -5,
+        right: -5,
+        backgroundColor: '#f00',
+        borderRadius: 20,
+        width: 30,
+        height: 30,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    notificationBadgeText: {
+        color: '#fff',
+        fontSize: 12,
+        fontWeight: 'bold',
+    }  
 }); 
 
 export default HomeScreen;
