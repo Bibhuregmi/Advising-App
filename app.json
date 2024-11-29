@@ -4,10 +4,11 @@
     "slug": "Advising-App",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+      "image": "./assets/advisingLogo.png",
+    "icon": "./assets/.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/advisingLogo.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
