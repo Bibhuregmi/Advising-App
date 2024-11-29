@@ -10,6 +10,7 @@ import EditProfile from "../screens/editprofile";
 import Resources from "../screens/resources";
 import Discussion from "../screens/discussion";
 import Notification from "../screens/notificationScreen";
+import Survey from "../screens/surveyScreen";
 
 const stack = createNativeStackNavigator();
 
@@ -56,6 +57,11 @@ const AppNavigator = ({user, userData}) => {
                     <stack.Screen
                         name = "Notification"
                         component={Notification}
+                        options={{headerShown: false}}
+                    />
+                    <stack.Screen
+                        name = "Survey"
+                        component={Survey}
                         options={{headerShown: false}}
                     />
                 </>
@@ -106,6 +112,11 @@ const AppNavigator = ({user, userData}) => {
                     <stack.Screen
                         name = "Notification"
                         component={Notification}
+                        options={{headerShown: false}}
+                    />
+                    <stack.Screen
+                        name = "Survey"
+                        component={Survey}
                         options={{headerShown: false}}
                     />
                 </>
