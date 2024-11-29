@@ -139,7 +139,7 @@ const HomeScreen = ({user}) => {
         {/*Second Row*/}
         <View style = {styles.iconRow}>
          {/* Survey Icon */}
-         <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+         <TouchableOpacity onPress={() => navigation.navigate('Survey')}>
             <View style = {styles.iconContainer}>
                 <Icon name = "clipboard-outline" size ={40} color = '#ccc' />
                 <Text style = {styles.iconText}>Survey</Text>
