@@ -10,7 +10,7 @@ import { View,
 
 const screenHeight = Dimensions.get('window').height;
 
-const Dropdown = ({ items, selectedValues, onSelect, placeholder }) => {
+const Dropdown = ({ items, selectedValues, onSelect, placeholder, containerStyle, dropdownStyle, itemStyle, textStyle }) => {
     const [isOpen, setIsOpen] = useState(false); 
     const [dropdownPosition, setDropdownPosition] = useState({top:0, left:0});
     const buttonRef = useRef(null);
@@ -18,49 +18,43 @@ const Dropdown = ({ items, selectedValues, onSelect, placeholder }) => {
     const handleToggleDropdown = () => {
         if (!isOpen) {
             buttonRef.current.measure((fx,fy,width,height,px,py) => {
-                setDropdownPosition({top: py + height, left: px});
+               const dropdownHeight = 200; 
+               const availableHeightBelow = screenHeight - py - height; 
+               const dropdownDirection = availableHeightBelow >= dropdownHeight ? py + height : py - dropdownHeight; 
+
+               setDropdownPosition({top: dropdownDirection, left: px});
             });
         }
         setIsOpen(!isOpen);
     }
     const handleSelect = (item) => {
-        onSelect(item);
+        onSelect(item.value);
         setIsOpen(false); 
     };
   return (
-    <View style = {styles.container}> 
+    <View style = {[styles.container, containerStyle]}> 
       <TouchableOpacity
         ref = {buttonRef}
-        style = {styles.button}
+        style = {[styles.button, dropdownStyle]}
         onPress={handleToggleDropdown}
       >
-        <Text style={styles.buttonText}>{selectedValues}</Text>
+        <Text style={styles.buttonText}>{selectedValues || placeholder}</Text>
       </TouchableOpacity>
       {isOpen &&(
-        <View
-        styles = {[
-            styles.dropdownContainer,
-            {
-                top: dropdownPosition.top,
-                left: dropdownPosition.left, 
-                maxHeight: screenHeight - dropdownPosition.top -20, 
-            },
-        ]}
-        >           
+        <View style = {[styles.dropdownContainer,dropdownStyle,]}>           
         <FlatList
             data = {items}
             renderItem={({item}) => (
                 <TouchableOpacity
-                    style = {styles.option}
-                    onPress={() => handleSelect(item.value)}
+                    style = {[styles.option, itemStyle]}
+                    onPress={() => handleSelect(item)}
                 >
-                    <Text style= {styles.optionText}>{item.label}</Text>
+                    <Text style= {[styles.optionText, textStyle]}>{item.label}</Text>
                 </TouchableOpacity>
             )}
             keyExtractor={(item) => item.value}
         />
-        </View>
-           
+        </View>    
       )}
     </View>
   )
