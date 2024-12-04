@@ -64,6 +64,16 @@ const AppNavigator = ({user, userData}) => {
                         component={Survey}
                         options={{headerShown: false}}
                     />
+                    <stack.Screen
+                        name="Login"
+                        component={LoginScreen}
+                        options={{headerShown: false}}
+                    />
+                    <stack.Screen
+                        name="ForgotPassword"
+                        component={ForgotPasswordScreen}
+                        options={{headerShown: false}}
+                    />
                 </>
             ) : (
                 // else user will be prompeted to login to proceed
